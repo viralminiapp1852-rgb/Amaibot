@@ -8,6 +8,9 @@
   <!-- Telegram WebApp SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   
+  <!-- Monetag Telegram Mini App SDK -->
+  <script src="//libtl.com/sdk.js" data-zone="11723018" data-sdk="show_11723018"></script>
+
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -92,7 +95,6 @@
     tg.expand();
   }
 
-  // Telegram se ID / Name fetch (fallback for browser testing)
   const tgUser = tg?.initDataUnsafe?.user;
   const currentUserId = tgUser?.id ? String(tgUser.id) : "demo_user_test";
   const currentUserName = tgUser?.first_name || "Demo Player";
@@ -142,7 +144,7 @@
       wrapper.innerHTML += `
         <div class="ad-card">
           <div class="card-header">
-            <span class="card-title">Button #${i + 1}</span>
+            <span class="card-title">Task #${i + 1}</span>
             <span class="ad-badge">${completed ? "Completed" : left + " ads bache hain"}</span>
           </div>
           <button class="action-btn" id="task-btn-${i}" ${completed ? "disabled" : ""} onclick="handleWatchAd(${i})">
@@ -159,22 +161,36 @@
   function handleWatchAd(index) {
     const targetBtn = document.getElementById(`task-btn-${index}`);
     targetBtn.disabled = true;
-    targetBtn.innerText = "Loading Ad...";
+    targetBtn.innerText = "Ad Loading...";
 
-    // Ad Complete Simulator
-    setTimeout(() => {
-      buttonStates[index] = (buttonStates[index] || 0) + 1;
-      totalDiamonds += 10;
+    // Monetag Rewarded Interstitial Trigger
+    if (typeof show_11723018 === "function") {
+      show_11723018()
+        .then(() => {
+          // User ne ad pura dekh liya -> Reward Credit
+          buttonStates[index] = (buttonStates[index] || 0) + 1;
+          totalDiamonds += 10;
 
-      document.getElementById("diamond-counter").innerText = totalDiamonds;
+          document.getElementById("diamond-counter").innerText = totalDiamonds;
+          buildButtons();
+
+          userDatabaseRef.set({
+            name: currentUserName,
+            diamonds: totalDiamonds,
+            tasks: buttonStates
+          });
+
+          alert("🎉 Mubarak ho! 10 Diamonds credit ho gaye.");
+        })
+        .catch((err) => {
+          console.error("Ad Error / Skipped:", err);
+          alert("Ad load nahi ho paya ya cancel ho gaya. Dobara try karein.");
+          buildButtons();
+        });
+    } else {
+      alert("Monetag Ad SDK abhi load ho raha hai. Thoda wait karke try karein.");
       buildButtons();
-
-      userDatabaseRef.set({
-        name: currentUserName,
-        diamonds: totalDiamonds,
-        tasks: buttonStates
-      });
-    }, 1200);
+    }
   }
 
   function showWallet() { document.getElementById("wallet-popup").style.display = "flex"; }
