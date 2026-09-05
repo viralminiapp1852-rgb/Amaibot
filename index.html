@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Redeem Reward App</title>
+  <title>Cosmic Rewards</title>
   
   <!-- Telegram WebApp SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -16,35 +16,149 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 
   <style>
+    :root {
+      --bg-color: #080706;
+      --card-bg: #14110f;
+      --card-border: #291f19;
+      --accent-orange: #ff6a00;
+      --accent-glow: #ff8c38;
+      --text-main: #f8fafc;
+      --text-muted: #9c9087;
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background: #0f172a; color: #f8fafc; padding: 16px; user-select: none; }
+    body { 
+      background: radial-gradient(circle at top right, #241206 0%, var(--bg-color) 60%);
+      color: var(--text-main); 
+      padding: 16px; 
+      min-height: 100vh;
+      user-select: none; 
+    }
     
     /* Top Bar */
-    .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .profile-card { background: #1e293b; padding: 8px 14px; border-radius: 20px; font-size: 14px; font-weight: 600; border: 1px solid #334155; }
-    .diamond-badge { background: linear-gradient(135deg, #2563eb, #1d4ed8); border: none; padding: 8px 16px; border-radius: 20px; font-size: 15px; font-weight: bold; color: #fff; cursor: pointer; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
+    .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
+    .profile-card { 
+      background: var(--card-bg); 
+      padding: 8px 16px; 
+      border-radius: 20px; 
+      font-size: 14px; 
+      font-weight: 600; 
+      border: 1px solid var(--card-border);
+      box-shadow: inset 0 0 8px rgba(255, 106, 0, 0.05);
+    }
+    
+    .diamond-badge { 
+      background: linear-gradient(135deg, #ff6a00, #d9480f); 
+      border: none; 
+      padding: 8px 18px; 
+      border-radius: 20px; 
+      font-size: 15px; 
+      font-weight: bold; 
+      color: #fff; 
+      cursor: pointer; 
+      box-shadow: 0 4px 14px rgba(255, 106, 0, 0.35);
+      transition: transform 0.15s;
+    }
+    .diamond-badge:active { transform: scale(0.95); }
     
     /* Task Cards */
     .task-container { display: flex; flex-direction: column; gap: 14px; }
-    .ad-card { background: #1e293b; padding: 16px; border-radius: 14px; border: 1px solid #334155; }
+    .ad-card { 
+      background: var(--card-bg); 
+      padding: 16px; 
+      border-radius: 14px; 
+      border: 1px solid var(--card-border); 
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
     .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .card-title { font-weight: 600; font-size: 15px; }
-    .ad-badge { font-size: 12px; color: #38bdf8; background: #0f172a; padding: 4px 10px; border-radius: 8px; font-weight: bold; border: 1px solid #1e293b; }
+    .card-title { font-weight: 600; font-size: 15px; letter-spacing: 0.5px; }
+    .ad-badge { 
+      font-size: 12px; 
+      color: var(--accent-glow); 
+      background: rgba(255, 106, 0, 0.1); 
+      padding: 4px 10px; 
+      border-radius: 8px; 
+      font-weight: bold; 
+      border: 1px solid rgba(255, 106, 0, 0.2); 
+    }
     
-    .action-btn { width: 100%; background: #38bdf8; color: #0f172a; border: none; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.2s; }
+    .action-btn { 
+      width: 100%; 
+      background: linear-gradient(135deg, #ff7a18, #af3c00); 
+      color: #fff; 
+      border: none; 
+      padding: 12px; 
+      border-radius: 10px; 
+      font-weight: bold; 
+      font-size: 14px; 
+      cursor: pointer; 
+      box-shadow: 0 3px 10px rgba(255, 106, 0, 0.25);
+      transition: 0.2s; 
+    }
     .action-btn:active { transform: scale(0.98); }
-    .action-btn:disabled { background: #334155; color: #64748b; cursor: not-allowed; transform: none; }
+    .action-btn:disabled { 
+      background: #1e1916; 
+      color: #594d45; 
+      cursor: not-allowed; 
+      box-shadow: none; 
+      transform: none; 
+    }
     
-    .progress-track { background: #0f172a; height: 8px; border-radius: 6px; margin-top: 12px; overflow: hidden; }
-    .progress-bar { background: #38bdf8; height: 100%; width: 0%; transition: width 0.3s ease; }
+    .progress-track { background: #0b0908; height: 8px; border-radius: 6px; margin-top: 12px; overflow: hidden; border: 1px solid #1f1814; }
+    .progress-bar { background: linear-gradient(90deg, #ff6a00, #ff9248); height: 100%; width: 0%; transition: width 0.3s ease; }
+
+    /* Daily Reset Notice */
+    .reset-timer-badge {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
 
     /* Wallet Popup */
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); align-items: center; justify-content: center; padding: 16px; z-index: 100; }
-    .modal-card { background: #1e293b; width: 100%; max-width: 380px; padding: 22px; border-radius: 16px; border: 1px solid #334155; }
-    .option-item { background: #0f172a; padding: 14px; border-radius: 10px; margin: 10px 0; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border: 1px solid #334155; transition: 0.2s; }
-    .option-item:active { border-color: #38bdf8; }
+    .modal-overlay { 
+      display: none; 
+      position: fixed; 
+      inset: 0; 
+      background: rgba(0, 0, 0, 0.88); 
+      backdrop-filter: blur(4px);
+      align-items: center; 
+      justify-content: center; 
+      padding: 16px; 
+      z-index: 100; 
+    }
+    .modal-card { 
+      background: var(--card-bg); 
+      width: 100%; 
+      max-width: 380px; 
+      padding: 22px; 
+      border-radius: 16px; 
+      border: 1px solid var(--card-border); 
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
+    }
+    .option-item { 
+      background: #0d0a09; 
+      padding: 14px; 
+      border-radius: 10px; 
+      margin: 10px 0; 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      cursor: pointer; 
+      border: 1px solid var(--card-border); 
+      transition: 0.2s; 
+    }
+    .option-item:hover, .option-item:active { border-color: var(--accent-orange); }
     
-    .status-panel { margin-top: 16px; padding: 14px; background: #0f172a; border-radius: 10px; font-size: 13px; text-align: center; border: 1px dashed #475569; }
+    .status-panel { 
+      margin-top: 16px; 
+      padding: 14px; 
+      background: #0a0807; 
+      border-radius: 10px; 
+      font-size: 13px; 
+      text-align: center; 
+      border: 1px dashed var(--card-border); 
+    }
   </style>
 </head>
 <body>
@@ -54,22 +168,24 @@
     <button class="diamond-badge" onclick="showWallet()">💎 <span id="diamond-counter">0</span></button>
   </div>
 
+  <div class="reset-timer-badge">⚡ Tasks daily midnight ko auto-reset ho jate hain</div>
+
   <div class="task-container" id="tasks-wrapper"></div>
 
   <!-- Wallet Modal -->
   <div class="modal-overlay" id="wallet-popup">
     <div class="modal-card">
-      <h3 style="font-size: 18px;">Redeem Code Store</h3>
-      <p style="font-size: 12px; color: #94a3b8; margin: 6px 0 14px 0;">Diamonds exchange karke redeem code lein:</p>
+      <h3 style="font-size: 18px; color: var(--accent-glow);">Redeem Code Store</h3>
+      <p style="font-size: 12px; color: var(--text-muted); margin: 6px 0 14px 0;">Apne diamonds exchange karein:</p>
       
       <div class="option-item" onclick="submitRedeemRequest(1200, 10)">
-        <b>₹10 Code</b><span style="color:#38bdf8; font-weight:bold;">1,200 💎</span>
+        <b>₹10 Code</b><span style="color:var(--accent-glow); font-weight:bold;">1,200 💎</span>
       </div>
       <div class="option-item" onclick="submitRedeemRequest(2300, 20)">
-        <b>₹20 Code</b><span style="color:#38bdf8; font-weight:bold;">2,300 💎</span>
+        <b>₹20 Code</b><span style="color:var(--accent-glow); font-weight:bold;">2,300 💎</span>
       </div>
       <div class="option-item" onclick="submitRedeemRequest(3000, 30)">
-        <b>₹30 Code</b><span style="color:#38bdf8; font-weight:bold;">3,000 💎</span>
+        <b>₹30 Code</b><span style="color:var(--accent-glow); font-weight:bold;">3,000 💎</span>
       </div>
 
       <div class="status-panel" id="request-display">Koi pending request nahi hai</div>
@@ -102,18 +218,68 @@
 
   let totalDiamonds = 0;
   let buttonStates = [0, 0, 0, 0, 0];
+  let lastActiveDay = "";
+
+  // Helper: Get Today's Date String YYYY-MM-DD
+  function getTodayString() {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  }
 
   buildButtons();
 
-  // Database Sync
+  // 1. IN-APP INTERSTITIAL INITIALIZATION (Runs in background)
+  window.addEventListener("load", () => {
+    if (typeof show_11723018 === "function") {
+      try {
+        show_11723018({
+          type: 'inApp',
+          inAppSettings: {
+            frequency: 2,
+            capping: 0.1,
+            interval: 30,
+            timeout: 5,
+            everyPage: false
+          }
+        });
+      } catch (err) {
+        console.log("In-app Ad init:", err);
+      }
+    }
+  });
+
+  // 2. Database Sync & Daily Auto-Reset Check
   const userDatabaseRef = db.ref("users/" + currentUserId);
   userDatabaseRef.on("value", (snapshot) => {
     const data = snapshot.val();
+    const today = getTodayString();
+
     if (data) {
+      // Diamonds hamesha bachenge (kabhi reset nahi honge)
       totalDiamonds = data.diamonds || 0;
-      buttonStates = data.tasks || [0, 0, 0, 0, 0];
       document.getElementById("diamond-counter").innerText = totalDiamonds;
+
+      // Agar din change ho gaya hai, to tasks ko 0 par reset kar do
+      if (data.lastDate !== today) {
+        buttonStates = [0, 0, 0, 0, 0];
+        lastActiveDay = today;
+        userDatabaseRef.update({
+          tasks: buttonStates,
+          lastDate: today
+        });
+      } else {
+        buttonStates = data.tasks || [0, 0, 0, 0, 0];
+        lastActiveDay = data.lastDate;
+      }
       buildButtons();
+    } else {
+      // Pehli baar user login hua hai
+      userDatabaseRef.set({
+        name: currentUserName,
+        diamonds: 0,
+        tasks: [0, 0, 0, 0, 0],
+        lastDate: today
+      });
     }
   });
 
@@ -125,9 +291,9 @@
     if (!data) {
       statusBox.innerText = "Koi pending request nahi hai";
     } else if (data.status === "pending") {
-      statusBox.innerHTML = `⏳ <b>₹${data.amount} Request Pending:</b><br><span style="color:#94a3b8; font-size:12px;">Aapko 24 hours ke andar kabhi bhi code mil jayega.</span>`;
+      statusBox.innerHTML = `⏳ <b>₹${data.amount} Request Pending:</b><br><span style="color:var(--text-muted); font-size:12px;">Aapko 24 hours ke andar kabhi bhi code mil jayega.</span>`;
     } else if (data.status === "approved") {
-      statusBox.innerHTML = `🎉 <b>Aapka Code Ready Hai:</b><br><code style="color:#38bdf8; font-size:16px; font-weight:bold; letter-spacing:1px;">${data.code}</code>`;
+      statusBox.innerHTML = `🎉 <b>Aapka Code Ready Hai:</b><br><code style="color:var(--accent-glow); font-size:16px; font-weight:bold; letter-spacing:1px;">${data.code}</code>`;
     }
   });
 
@@ -144,11 +310,11 @@
       wrapper.innerHTML += `
         <div class="ad-card">
           <div class="card-header">
-            <span class="card-title">Task #${i + 1}</span>
-            <span class="ad-badge">${completed ? "Completed" : left + " ads bache hain"}</span>
+            <span class="card-title">Mission #${i + 1}</span>
+            <span class="ad-badge">${completed ? "Finished" : left + " ads left"}</span>
           </div>
           <button class="action-btn" id="task-btn-${i}" ${completed ? "disabled" : ""} onclick="handleWatchAd(${i})">
-            ${completed ? "Mission Done" : "Watch Ad (+10 💎)"}
+            ${completed ? "Mission Finished" : "Watch Ad (+10 💎)"}
           </button>
           <div class="progress-track">
             <div class="progress-bar" style="width: ${progressPercent}%;"></div>
@@ -158,37 +324,38 @@
     }
   }
 
+  // Rewarded Interstitial Trigger (Button Click Par)
   function handleWatchAd(index) {
     const targetBtn = document.getElementById(`task-btn-${index}`);
     targetBtn.disabled = true;
     targetBtn.innerText = "Ad Loading...";
 
-    // Monetag Rewarded Interstitial Trigger
     if (typeof show_11723018 === "function") {
       show_11723018()
         .then(() => {
-          // User ne ad pura dekh liya -> Reward Credit
           buttonStates[index] = (buttonStates[index] || 0) + 1;
           totalDiamonds += 10;
 
           document.getElementById("diamond-counter").innerText = totalDiamonds;
           buildButtons();
 
-          userDatabaseRef.set({
+          // Save progress & ensure lastDate is saved
+          userDatabaseRef.update({
             name: currentUserName,
             diamonds: totalDiamonds,
-            tasks: buttonStates
+            tasks: buttonStates,
+            lastDate: getTodayString()
           });
 
-          alert("🎉 Mubarak ho! 10 Diamonds credit ho gaye.");
+          alert("🎉 Mubarak ho! 10 Diamonds add ho gaye.");
         })
         .catch((err) => {
           console.error("Ad Error / Skipped:", err);
-          alert("Ad load nahi ho paya ya cancel ho gaya. Dobara try karein.");
+          alert("Ad load nahi ho paya ya cancel ho gaya. Dobara koshish karein.");
           buildButtons();
         });
     } else {
-      alert("Monetag Ad SDK abhi load ho raha hai. Thoda wait karke try karein.");
+      alert("Monetag Ad SDK connect ho raha hai. Kuch der baad click karein.");
       buildButtons();
     }
   }
