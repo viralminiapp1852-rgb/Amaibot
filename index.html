@@ -35,7 +35,6 @@
       user-select: none; 
     }
     
-    /* Top Bar */
     .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
     .profile-card { 
       background: var(--card-bg); 
@@ -61,7 +60,6 @@
     }
     .diamond-badge:active { transform: scale(0.95); }
     
-    /* Task Cards */
     .task-container { display: flex; flex-direction: column; gap: 14px; }
     .ad-card { 
       background: var(--card-bg); 
@@ -107,7 +105,6 @@
     .progress-track { background: #0b0908; height: 8px; border-radius: 6px; margin-top: 12px; overflow: hidden; border: 1px solid #1f1814; }
     .progress-bar { background: linear-gradient(90deg, #ff6a00, #ff9248); height: 100%; width: 0%; transition: width 0.3s ease; }
 
-    /* Daily Reset Notice */
     .reset-timer-badge {
       text-align: center;
       font-size: 12px;
@@ -194,7 +191,6 @@
   </div>
 
 <script>
-  // Firebase Configuration
   const firebaseConfig = {
     apiKey: "AIzaSyDvC04b5_jmvpyxS-Yk2in0Uee3I8G5jd4",
     databaseURL: "https://amaibot-6736d-default-rtdb.firebaseio.com",
@@ -204,7 +200,6 @@
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
-  // Telegram User Init
   const tg = window.Telegram?.WebApp;
   if (tg) {
     tg.ready();
@@ -218,9 +213,7 @@
 
   let totalDiamonds = 0;
   let buttonStates = [0, 0, 0, 0, 0];
-  let lastActiveDay = "";
 
-  // Helper: Get Today's Date String YYYY-MM-DD
   function getTodayString() {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
@@ -228,7 +221,7 @@
 
   buildButtons();
 
-  // 1. IN-APP INTERSTITIAL INITIALIZATION (Runs in background)
+  // In-app interstitial ads setup
   window.addEventListener("load", () => {
     if (typeof show_11723018 === "function") {
       try {
@@ -248,32 +241,27 @@
     }
   });
 
-  // 2. Database Sync & Daily Auto-Reset Check
+  // User Data & Daily Reset Logic
   const userDatabaseRef = db.ref("users/" + currentUserId);
   userDatabaseRef.on("value", (snapshot) => {
     const data = snapshot.val();
     const today = getTodayString();
 
     if (data) {
-      // Diamonds hamesha bachenge (kabhi reset nahi honge)
       totalDiamonds = data.diamonds || 0;
       document.getElementById("diamond-counter").innerText = totalDiamonds;
 
-      // Agar din change ho gaya hai, to tasks ko 0 par reset kar do
       if (data.lastDate !== today) {
         buttonStates = [0, 0, 0, 0, 0];
-        lastActiveDay = today;
         userDatabaseRef.update({
           tasks: buttonStates,
           lastDate: today
         });
       } else {
         buttonStates = data.tasks || [0, 0, 0, 0, 0];
-        lastActiveDay = data.lastDate;
       }
       buildButtons();
     } else {
-      // Pehli baar user login hua hai
       userDatabaseRef.set({
         name: currentUserName,
         diamonds: 0,
@@ -283,7 +271,7 @@
     }
   });
 
-  // Withdraw Status Listener
+  // Withdrawal Status Listener with 20% Refund Warning
   const requestDatabaseRef = db.ref("withdrawals/" + currentUserId);
   requestDatabaseRef.on("value", (snapshot) => {
     const data = snapshot.val();
@@ -291,9 +279,18 @@
     if (!data) {
       statusBox.innerText = "Koi pending request nahi hai";
     } else if (data.status === "pending") {
-      statusBox.innerHTML = `⏳ <b>₹${data.amount} Request Pending:</b><br><span style="color:var(--text-muted); font-size:12px;">Aapko 24 hours ke andar kabhi bhi code mil jayega.</span>`;
+      statusBox.innerHTML = `⏳ <b>₹${data.amount} Request Pending:</b><br><span style="color:var(--text-muted); font-size:12px;">Aapko 24 hours ke andar code mil jayega.</span>`;
     } else if (data.status === "approved") {
-      statusBox.innerHTML = `🎉 <b>Aapka Code Ready Hai:</b><br><code style="color:var(--accent-glow); font-size:16px; font-weight:bold; letter-spacing:1px;">${data.code}</code>`;
+      statusBox.innerHTML = `🎉 <b>Aapka Code Ready Hai:</b><br><code style="color:var(--accent-glow); font-size:16px; font-weight:bold; letter-spacing:1px; background:#14110f; padding:4px 8px; border-radius:4px;">${data.code}</code>`;
+    } else if (data.status === "rejected") {
+      statusBox.innerHTML = `
+        <div style="border-left: 3px solid #ef4444; padding-left: 10px; text-align: left;">
+          <b style="color:#ef4444;">❌ Request Rejected</b>
+          <p style="color:#f87171; font-size:12px; margin-top:4px; line-height: 1.4;">
+            ${data.reason || "Aapne tasks theek se nahi kiye."}
+          </p>
+        </div>
+      `;
     }
   });
 
@@ -324,7 +321,6 @@
     }
   }
 
-  // Rewarded Interstitial Trigger (Button Click Par)
   function handleWatchAd(index) {
     const targetBtn = document.getElementById(`task-btn-${index}`);
     targetBtn.disabled = true;
@@ -339,7 +335,6 @@
           document.getElementById("diamond-counter").innerText = totalDiamonds;
           buildButtons();
 
-          // Save progress & ensure lastDate is saved
           userDatabaseRef.update({
             name: currentUserName,
             diamonds: totalDiamonds,
