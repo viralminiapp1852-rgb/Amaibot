@@ -3,15 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cosmic Rewards</title>
+  <title>Cosmic Rewards - 10 Missions</title>
   
-  <!-- Telegram WebApp SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  
-  <!-- Monetag Telegram Mini App SDK -->
   <script src="//libtl.com/sdk.js" data-zone="11723018" data-sdk="show_11723018"></script>
-
-  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 
@@ -35,7 +30,7 @@
       user-select: none; 
     }
     
-    .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
+    .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
     .profile-card { 
       background: var(--card-bg); 
       padding: 8px 16px; 
@@ -43,7 +38,6 @@
       font-size: 14px; 
       font-weight: 600; 
       border: 1px solid var(--card-border);
-      box-shadow: inset 0 0 8px rgba(255, 106, 0, 0.05);
     }
     
     .diamond-badge { 
@@ -56,11 +50,10 @@
       color: #fff; 
       cursor: pointer; 
       box-shadow: 0 4px 14px rgba(255, 106, 0, 0.35);
-      transition: transform 0.15s;
     }
     .diamond-badge:active { transform: scale(0.95); }
     
-    .task-container { display: flex; flex-direction: column; gap: 14px; }
+    .task-container { display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px; }
     .ad-card { 
       background: var(--card-bg); 
       padding: 16px; 
@@ -69,7 +62,7 @@
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
     }
     .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .card-title { font-weight: 600; font-size: 15px; letter-spacing: 0.5px; }
+    .card-title { font-weight: 600; font-size: 15px; }
     .ad-badge { 
       font-size: 12px; 
       color: var(--accent-glow); 
@@ -80,25 +73,31 @@
       border: 1px solid rgba(255, 106, 0, 0.2); 
     }
     
+    .btn-actions-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    
     .action-btn { 
       width: 100%; 
       background: linear-gradient(135deg, #ff7a18, #af3c00); 
       color: #fff; 
       border: none; 
-      padding: 12px; 
+      padding: 11px 8px; 
       border-radius: 10px; 
       font-weight: bold; 
-      font-size: 14px; 
+      font-size: 13px; 
       cursor: pointer; 
-      box-shadow: 0 3px 10px rgba(255, 106, 0, 0.25);
       transition: 0.2s; 
+    }
+    .action-btn.secondary {
+      background: #26170e;
+      border: 1px solid var(--card-border);
+      color: var(--accent-glow);
     }
     .action-btn:active { transform: scale(0.98); }
     .action-btn:disabled { 
-      background: #1e1916; 
-      color: #594d45; 
+      background: #1e1916 !important; 
+      color: #594d45 !important; 
+      border: none;
       cursor: not-allowed; 
-      box-shadow: none; 
       transform: none; 
     }
     
@@ -112,7 +111,6 @@
       margin-bottom: 14px;
     }
 
-    /* Wallet Popup */
     .modal-overlay { 
       display: none; 
       position: fixed; 
@@ -165,7 +163,7 @@
     <button class="diamond-badge" onclick="showWallet()">💎 <span id="diamond-counter">0</span></button>
   </div>
 
-  <div class="reset-timer-badge">⚡ Tasks daily midnight ko auto-reset ho jate hain</div>
+  <div class="reset-timer-badge">⚡ Total 10 Missions • 8 Ads Per Mission • Daily Midnight Reset</div>
 
   <div class="task-container" id="tasks-wrapper"></div>
 
@@ -175,14 +173,17 @@
       <h3 style="font-size: 18px; color: var(--accent-glow);">Redeem Code Store</h3>
       <p style="font-size: 12px; color: var(--text-muted); margin: 6px 0 14px 0;">Apne diamonds exchange karein:</p>
       
-      <div class="option-item" onclick="submitRedeemRequest(1200, 10)">
-        <b>₹10 Code</b><span style="color:var(--accent-glow); font-weight:bold;">1,200 💎</span>
+      <div class="option-item" onclick="submitRedeemRequest(2500, 10)">
+        <b>₹10 Code</b><span style="color:var(--accent-glow); font-weight:bold;">2,500 💎</span>
       </div>
-      <div class="option-item" onclick="submitRedeemRequest(2300, 20)">
-        <b>₹20 Code</b><span style="color:var(--accent-glow); font-weight:bold;">2,300 💎</span>
+      <div class="option-item" onclick="submitRedeemRequest(4800, 20)">
+        <b>₹20 Code</b><span style="color:var(--accent-glow); font-weight:bold;">4,800 💎</span>
       </div>
-      <div class="option-item" onclick="submitRedeemRequest(3000, 30)">
-        <b>₹30 Code</b><span style="color:var(--accent-glow); font-weight:bold;">3,000 💎</span>
+      <div class="option-item" onclick="submitRedeemRequest(7000, 30)">
+        <b>₹30 Code</b><span style="color:var(--accent-glow); font-weight:bold;">7,000 💎</span>
+      </div>
+      <div class="option-item" onclick="submitRedeemRequest(11500, 50)">
+        <b>₹50 Code</b><span style="color:var(--accent-glow); font-weight:bold;">11,500 💎</span>
       </div>
 
       <div class="status-panel" id="request-display">Koi pending request nahi hai</div>
@@ -191,6 +192,9 @@
   </div>
 
 <script>
+  const TOTAL_BUTTONS = 10;
+  const ADS_PER_BUTTON = 8;
+
   const firebaseConfig = {
     apiKey: "AIzaSyDvC04b5_jmvpyxS-Yk2in0Uee3I8G5jd4",
     databaseURL: "https://amaibot-6736d-default-rtdb.firebaseio.com",
@@ -201,10 +205,7 @@
   const db = firebase.database();
 
   const tg = window.Telegram?.WebApp;
-  if (tg) {
-    tg.ready();
-    tg.expand();
-  }
+  if (tg) { tg.ready(); tg.expand(); }
 
   const tgUser = tg?.initDataUnsafe?.user;
   const currentUserId = tgUser?.id ? String(tgUser.id) : "demo_user_test";
@@ -212,7 +213,7 @@
   document.getElementById("user-display").innerText = "👤 " + currentUserName;
 
   let totalDiamonds = 0;
-  let buttonStates = [0, 0, 0, 0, 0];
+  let buttonStates = new Array(TOTAL_BUTTONS).fill(0);
 
   function getTodayString() {
     const now = new Date();
@@ -221,16 +222,16 @@
 
   buildButtons();
 
-  // In-app interstitial ads setup
+  // In-App Interstitial Background Ads
   window.addEventListener("load", () => {
     if (typeof show_11723018 === "function") {
       try {
         show_11723018({
           type: 'inApp',
           inAppSettings: {
-            frequency: 2,
+            frequency: 3,
             capping: 0.1,
-            interval: 30,
+            interval: 20,
             timeout: 5,
             everyPage: false
           }
@@ -241,7 +242,7 @@
     }
   });
 
-  // User Data & Daily Reset Logic
+  // User Sync & Daily Reset
   const userDatabaseRef = db.ref("users/" + currentUserId);
   userDatabaseRef.on("value", (snapshot) => {
     const data = snapshot.val();
@@ -252,26 +253,27 @@
       document.getElementById("diamond-counter").innerText = totalDiamonds;
 
       if (data.lastDate !== today) {
-        buttonStates = [0, 0, 0, 0, 0];
+        buttonStates = new Array(TOTAL_BUTTONS).fill(0);
         userDatabaseRef.update({
           tasks: buttonStates,
           lastDate: today
         });
       } else {
-        buttonStates = data.tasks || [0, 0, 0, 0, 0];
+        const loadedTasks = data.tasks || [];
+        buttonStates = Array.from({ length: TOTAL_BUTTONS }, (_, i) => loadedTasks[i] || 0);
       }
       buildButtons();
     } else {
       userDatabaseRef.set({
         name: currentUserName,
         diamonds: 0,
-        tasks: [0, 0, 0, 0, 0],
+        tasks: new Array(TOTAL_BUTTONS).fill(0),
         lastDate: today
       });
     }
   });
 
-  // Withdrawal Status Listener with 20% Refund Warning
+  // Withdraw Status Listener
   const requestDatabaseRef = db.ref("withdrawals/" + currentUserId);
   requestDatabaseRef.on("value", (snapshot) => {
     const data = snapshot.val();
@@ -298,11 +300,11 @@
     const wrapper = document.getElementById("tasks-wrapper");
     wrapper.innerHTML = "";
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < TOTAL_BUTTONS; i++) {
       const watched = buttonStates[i] || 0;
-      const left = 5 - watched;
+      const left = ADS_PER_BUTTON - watched;
       const completed = left <= 0;
-      const progressPercent = (watched / 5) * 100;
+      const progressPercent = (watched / ADS_PER_BUTTON) * 100;
 
       wrapper.innerHTML += `
         <div class="ad-card">
@@ -310,9 +312,16 @@
             <span class="card-title">Mission #${i + 1}</span>
             <span class="ad-badge">${completed ? "Finished" : left + " ads left"}</span>
           </div>
-          <button class="action-btn" id="task-btn-${i}" ${completed ? "disabled" : ""} onclick="handleWatchAd(${i})">
-            ${completed ? "Mission Finished" : "Watch Ad (+10 💎)"}
-          </button>
+          
+          <div class="btn-actions-row">
+            <button class="action-btn" id="btn-video-${i}" ${completed ? "disabled" : ""} onclick="triggerAd(${i}, 'video')">
+              ${completed ? "Done" : "🎬 Video Ad (+10)"}
+            </button>
+            <button class="action-btn secondary" id="btn-fast-${i}" ${completed ? "disabled" : ""} onclick="triggerAd(${i}, 'popup')">
+              ${completed ? "Done" : "⚡ Fast Ad (+10)"}
+            </button>
+          </div>
+
           <div class="progress-track">
             <div class="progress-bar" style="width: ${progressPercent}%;"></div>
           </div>
@@ -321,36 +330,41 @@
     }
   }
 
-  function handleWatchAd(index) {
-    const targetBtn = document.getElementById(`task-btn-${index}`);
-    targetBtn.disabled = true;
-    targetBtn.innerText = "Ad Loading...";
+  function triggerAd(index, adType) {
+    if (buttonStates[index] >= ADS_PER_BUTTON) return;
+
+    const vBtn = document.getElementById(`btn-video-${index}`);
+    const fBtn = document.getElementById(`btn-fast-${index}`);
+    if (vBtn) vBtn.disabled = true;
+    if (fBtn) fBtn.disabled = true;
 
     if (typeof show_11723018 === "function") {
-      show_11723018()
-        .then(() => {
-          buttonStates[index] = (buttonStates[index] || 0) + 1;
-          totalDiamonds += 10;
+      const adPromise = (adType === 'popup') 
+        ? show_11723018({ type: 'rewardedPopup' }) 
+        : show_11723018();
 
-          document.getElementById("diamond-counter").innerText = totalDiamonds;
-          buildButtons();
+      adPromise.then(() => {
+        buttonStates[index] = (buttonStates[index] || 0) + 1;
+        totalDiamonds += 10;
 
-          userDatabaseRef.update({
-            name: currentUserName,
-            diamonds: totalDiamonds,
-            tasks: buttonStates,
-            lastDate: getTodayString()
-          });
+        document.getElementById("diamond-counter").innerText = totalDiamonds;
+        buildButtons();
 
-          alert("🎉 Mubarak ho! 10 Diamonds add ho gaye.");
-        })
-        .catch((err) => {
-          console.error("Ad Error / Skipped:", err);
-          alert("Ad load nahi ho paya ya cancel ho gaya. Dobara koshish karein.");
-          buildButtons();
+        userDatabaseRef.update({
+          name: currentUserName,
+          diamonds: totalDiamonds,
+          tasks: buttonStates,
+          lastDate: getTodayString()
         });
+
+        alert("🎉 +10 Diamonds credit ho gaye!");
+      }).catch((err) => {
+        console.error("Ad Failed/Closed:", err);
+        alert("Ad pura watch nahi hua ya cancel ho gaya!");
+        buildButtons();
+      });
     } else {
-      alert("Monetag Ad SDK connect ho raha hai. Kuch der baad click karein.");
+      alert("Ad network connect ho raha hai, 5 seconds baad click karein.");
       buildButtons();
     }
   }
