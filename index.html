@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cosmic Rewards - 10 Missions</title>
+  <title>Cosmic Rewards - Missions</title>
   
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="//libtl.com/sdk.js" data-zone="11723018" data-sdk="show_11723018"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 
@@ -73,24 +72,17 @@
       border: 1px solid rgba(255, 106, 0, 0.2); 
     }
     
-    .btn-actions-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    
     .action-btn { 
       width: 100%; 
       background: linear-gradient(135deg, #ff7a18, #af3c00); 
       color: #fff; 
       border: none; 
-      padding: 11px 8px; 
+      padding: 12px; 
       border-radius: 10px; 
       font-weight: bold; 
-      font-size: 13px; 
+      font-size: 14px; 
       cursor: pointer; 
       transition: 0.2s; 
-    }
-    .action-btn.secondary {
-      background: #26170e;
-      border: 1px solid var(--card-border);
-      color: var(--accent-glow);
     }
     .action-btn:active { transform: scale(0.98); }
     .action-btn:disabled { 
@@ -163,7 +155,7 @@
     <button class="diamond-badge" onclick="showWallet()">💎 <span id="diamond-counter">0</span></button>
   </div>
 
-  <div class="reset-timer-badge">⚡ Total 10 Missions • 8 Ads Per Mission • Daily Midnight Reset</div>
+  <div class="reset-timer-badge">⚡ 5 Daily Missions • Safe & Verified • Daily Midnight Reset</div>
 
   <div class="task-container" id="tasks-wrapper"></div>
 
@@ -173,17 +165,17 @@
       <h3 style="font-size: 18px; color: var(--accent-glow);">Redeem Code Store</h3>
       <p style="font-size: 12px; color: var(--text-muted); margin: 6px 0 14px 0;">Apne diamonds exchange karein:</p>
       
-      <div class="option-item" onclick="submitRedeemRequest(2500, 10)">
-        <b>₹10 Code</b><span style="color:var(--accent-glow); font-weight:bold;">2,500 💎</span>
+      <div class="option-item" onclick="submitRedeemRequest(1000, 10)">
+        <b>₹10 Code</b><span style="color:var(--accent-glow); font-weight:bold;">1,000 💎</span>
       </div>
-      <div class="option-item" onclick="submitRedeemRequest(4800, 20)">
-        <b>₹20 Code</b><span style="color:var(--accent-glow); font-weight:bold;">4,800 💎</span>
+      <div class="option-item" onclick="submitRedeemRequest(2000, 20)">
+        <b>₹20 Code</b><span style="color:var(--accent-glow); font-weight:bold;">2,000 💎</span>
       </div>
-      <div class="option-item" onclick="submitRedeemRequest(7000, 30)">
-        <b>₹30 Code</b><span style="color:var(--accent-glow); font-weight:bold;">7,000 💎</span>
+      <div class="option-item" onclick="submitRedeemRequest(3000, 30)">
+        <b>₹30 Code</b><span style="color:var(--accent-glow); font-weight:bold;">3,000 💎</span>
       </div>
-      <div class="option-item" onclick="submitRedeemRequest(11500, 50)">
-        <b>₹50 Code</b><span style="color:var(--accent-glow); font-weight:bold;">11,500 💎</span>
+      <div class="option-item" onclick="submitRedeemRequest(5000, 50)">
+        <b>₹50 Code</b><span style="color:var(--accent-glow); font-weight:bold;">5,000 💎</span>
       </div>
 
       <div class="status-panel" id="request-display">Koi pending request nahi hai</div>
@@ -192,8 +184,12 @@
   </div>
 
 <script>
-  const TOTAL_BUTTONS = 10;
-  const ADS_PER_BUTTON = 8;
+  const TOTAL_BUTTONS = 5;
+  const ADS_PER_BUTTON = 2; // Total 10 clean clicks daily
+  const REWARD_PER_AD = 20;  // Per ad +20 Diamonds
+
+  // Adsterra Smartlink
+  const ADSTERRA_SMARTLINK = "https://www.profitableratecpmnetwork.com/giygreaj3u?key=5ff015af48761eefa5123b07c2ace998";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDvC04b5_jmvpyxS-Yk2in0Uee3I8G5jd4",
@@ -221,26 +217,6 @@
   }
 
   buildButtons();
-
-  // In-App Interstitial Background Ads
-  window.addEventListener("load", () => {
-    if (typeof show_11723018 === "function") {
-      try {
-        show_11723018({
-          type: 'inApp',
-          inAppSettings: {
-            frequency: 3,
-            capping: 0.1,
-            interval: 20,
-            timeout: 5,
-            everyPage: false
-          }
-        });
-      } catch (err) {
-        console.log("In-app Ad init:", err);
-      }
-    }
-  });
 
   // User Sync & Daily Reset
   const userDatabaseRef = db.ref("users/" + currentUserId);
@@ -310,17 +286,12 @@
         <div class="ad-card">
           <div class="card-header">
             <span class="card-title">Mission #${i + 1}</span>
-            <span class="ad-badge">${completed ? "Finished" : left + " ads left"}</span>
+            <span class="ad-badge">${completed ? "Completed" : left + " steps left"}</span>
           </div>
           
-          <div class="btn-actions-row">
-            <button class="action-btn" id="btn-video-${i}" ${completed ? "disabled" : ""} onclick="triggerAd(${i}, 'video')">
-              ${completed ? "Done" : "🎬 Video Ad (+10)"}
-            </button>
-            <button class="action-btn secondary" id="btn-fast-${i}" ${completed ? "disabled" : ""} onclick="triggerAd(${i}, 'popup')">
-              ${completed ? "Done" : "⚡ Fast Ad (+10)"}
-            </button>
-          </div>
+          <button class="action-btn" id="btn-mission-${i}" ${completed ? "disabled" : ""} onclick="triggerAdsterraMission(${i})">
+            ${completed ? "Claimed ✅" : `⚡ Complete Sponsor Task (+${REWARD_PER_AD} 💎)`}
+          </button>
 
           <div class="progress-track">
             <div class="progress-bar" style="width: ${progressPercent}%;"></div>
@@ -330,43 +301,36 @@
     }
   }
 
-  function triggerAd(index, adType) {
+  function triggerAdsterraMission(index) {
     if (buttonStates[index] >= ADS_PER_BUTTON) return;
 
-    const vBtn = document.getElementById(`btn-video-${index}`);
-    const fBtn = document.getElementById(`btn-fast-${index}`);
-    if (vBtn) vBtn.disabled = true;
-    if (fBtn) fBtn.disabled = true;
+    const btn = document.getElementById(`btn-mission-${index}`);
+    if (btn) btn.disabled = true;
 
-    if (typeof show_11723018 === "function") {
-      const adPromise = (adType === 'popup') 
-        ? show_11723018({ type: 'rewardedPopup' }) 
-        : show_11723018();
-
-      adPromise.then(() => {
-        buttonStates[index] = (buttonStates[index] || 0) + 1;
-        totalDiamonds += 10;
-
-        document.getElementById("diamond-counter").innerText = totalDiamonds;
-        buildButtons();
-
-        userDatabaseRef.update({
-          name: currentUserName,
-          diamonds: totalDiamonds,
-          tasks: buttonStates,
-          lastDate: getTodayString()
-        });
-
-        alert("🎉 +10 Diamonds credit ho gaye!");
-      }).catch((err) => {
-        console.error("Ad Failed/Closed:", err);
-        alert("Ad pura watch nahi hua ya cancel ho gaya!");
-        buildButtons();
-      });
+    // Open Adsterra Smartlink
+    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
+      window.Telegram.WebApp.openLink(ADSTERRA_SMARTLINK);
     } else {
-      alert("Ad network connect ho raha hai, 5 seconds baad click karein.");
-      buildButtons();
+      window.open(ADSTERRA_SMARTLINK, '_blank');
     }
+
+    // Reward Credit
+    setTimeout(() => {
+      buttonStates[index] = (buttonStates[index] || 0) + 1;
+      totalDiamonds += REWARD_PER_AD;
+
+      document.getElementById("diamond-counter").innerText = totalDiamonds;
+      buildButtons();
+
+      userDatabaseRef.update({
+        name: currentUserName,
+        diamonds: totalDiamonds,
+        tasks: buttonStates,
+        lastDate: getTodayString()
+      });
+
+      alert(`🎉 +${REWARD_PER_AD} Diamonds credit ho gaye!`);
+    }, 1000);
   }
 
   function showWallet() { document.getElementById("wallet-popup").style.display = "flex"; }
