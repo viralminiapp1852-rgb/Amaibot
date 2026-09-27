@@ -9,7 +9,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
+  <!-- Telegram Web App SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <!-- Adsgram SDK -->
+  <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 
@@ -23,7 +29,6 @@
       --accent: #ff6b00;
       --accent-gradient: linear-gradient(135deg, #ff8533 0%, #ff5500 100%);
       --accent-glow: rgba(255, 107, 0, 0.28);
-      --cyan-glow: #00f2fe;
       --text: #f1f5f9;
       --text-muted: #8b95a5;
       --success: #10b981;
@@ -48,7 +53,6 @@
       user-select: none;
     }
 
-    /* TOP BAR */
     .top-bar {
       display: flex;
       justify-content: space-between;
@@ -91,14 +95,13 @@
       font-size: 14px;
       cursor: pointer;
       box-shadow: 0 4px 16px var(--accent-glow);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      transition: transform 0.15s ease;
     }
 
     .wallet-trigger:active {
       transform: scale(0.96);
     }
 
-    /* STATS HEADER */
     .hero-banner {
       background: linear-gradient(180deg, rgba(255, 107, 0, 0.08) 0%, rgba(17, 20, 30, 0.6) 100%);
       border: 1px solid var(--border-focus);
@@ -108,20 +111,6 @@
       margin-bottom: 22px;
       position: relative;
       overflow: hidden;
-    }
-
-    .hero-banner::before {
-      content: '';
-      position: absolute;
-      top: -20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 140px;
-      height: 40px;
-      background: var(--accent);
-      filter: blur(40px);
-      opacity: 0.35;
-      pointer-events: none;
     }
 
     .hero-title {
@@ -137,7 +126,6 @@
       color: var(--text-muted);
     }
 
-    /* MISSION CARDS */
     .task-container {
       display: flex;
       flex-direction: column;
@@ -217,7 +205,6 @@
       border-radius: 12px;
       font-size: 13px;
       font-weight: 700;
-      letter-spacing: 0.2px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -254,10 +241,8 @@
       height: 100%;
       width: 0%;
       transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 0 10px var(--accent);
     }
 
-    /* REDEEM STORE MODAL */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -268,12 +253,6 @@
       justify-content: center;
       padding: 16px;
       z-index: 100;
-      animation: fadeIn 0.2s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
     }
 
     .modal-card {
@@ -284,38 +263,13 @@
       border-radius: 20px;
       border: 1px solid var(--border);
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
-      animation: zoomIn 0.2s ease;
-    }
-
-    @keyframes zoomIn {
-      from { transform: scale(0.94); }
-      to { transform: scale(1); }
-    }
-
-    .modal-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-
-    .modal-head h3 {
-      font-size: 18px;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .store-sub {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-bottom: 18px;
     }
 
     .options-grid {
       display: flex;
       flex-direction: column;
       gap: 10px;
-      margin-bottom: 18px;
+      margin: 18px 0;
     }
 
     .store-item {
@@ -327,7 +281,6 @@
       padding: 14px 16px;
       border-radius: 12px;
       cursor: pointer;
-      transition: all 0.15s ease;
     }
 
     .store-item:active {
@@ -372,18 +325,11 @@
       font-size: 13px;
       font-weight: 600;
       cursor: pointer;
-      transition: 0.15s;
-    }
-
-    .btn-dismiss:active {
-      background: rgba(255, 255, 255, 0.05);
-      color: #fff;
     }
   </style>
 </head>
 <body>
 
-  <!-- Top Navigation -->
   <div class="top-bar">
     <div class="user-pill">
       <div class="user-avatar-dot"></div>
@@ -395,23 +341,21 @@
     </button>
   </div>
 
-  <!-- Hero Header -->
   <div class="hero-banner">
     <div class="hero-title">Cosmic Daily Pass</div>
     <div class="hero-subtitle">Complete 5 missions daily • Verified Instant Payouts</div>
   </div>
 
-  <!-- Tasks Wrapper -->
   <div class="task-container" id="tasks-wrapper"></div>
 
-  <!-- Wallet / Redeem Modal -->
+  <!-- Wallet / Store Modal -->
   <div class="modal-overlay" id="wallet-popup">
     <div class="modal-card">
-      <div class="modal-head">
-        <h3>Redeem Store</h3>
-        <span style="font-size: 12px; color: var(--text-muted);">Instant Exchange</span>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="font-size:18px; color:#fff;">Redeem Store</h3>
+        <span style="font-size:12px; color:var(--text-muted);">Instant Exchange</span>
       </div>
-      <div class="store-sub">Select a Google Play code to exchange your diamonds:</div>
+      <p style="font-size:12px; color:var(--text-muted); margin-top:4px;">Exchange your diamonds for Google Play codes:</p>
 
       <div class="options-grid">
         <div class="store-item" onclick="submitRedeemRequest(1000, 10)">
@@ -442,8 +386,8 @@
   const ADS_PER_BUTTON = 2; 
   const REWARD_PER_AD = 20;  
 
-  // Dedicated Adsterra Mainstream Smartlink
-  const ADSTERRA_SMARTLINK = "https://www.profitableratecpmnetwork.com/fhrujsyn?key=873ac4051875f59b08114297d528e2e8";
+  // Adsgram Rewarded Controller Initialization (Block ID: 50223)
+  const AdController = window.Adsgram ? window.Adsgram.init({ blockId: "50223" }) : null;
 
   const firebaseConfig = {
     apiKey: "AIzaSyDvC04b5_jmvpyxS-Yk2in0Uee3I8G5jd4",
@@ -550,8 +494,8 @@
             </span>
           </div>
 
-          <button class="btn-mission" id="btn-mission-${i}" ${completed ? "disabled" : ""} onclick="triggerAdsterraMission(${i})">
-            ${completed ? "Claimed ✨" : `⚡ Verify Step (+${REWARD_PER_AD} 💎)`}
+          <button class="btn-mission" id="btn-mission-${i}" ${completed ? "disabled" : ""} onclick="triggerAdsgramAd(${i})">
+            ${completed ? "Claimed ✨" : `▶ Watch Ad (+${REWARD_PER_AD} 💎)`}
           </button>
 
           <div class="track-wrapper">
@@ -562,32 +506,50 @@
     }
   }
 
-  function triggerAdsterraMission(index) {
+  // Adsgram Ad Show Handler
+  function triggerAdsgramAd(index) {
     if (buttonStates[index] >= ADS_PER_BUTTON) return;
 
     const btn = document.getElementById(`btn-mission-${index}`);
     if (btn) btn.disabled = true;
 
-    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
-      window.Telegram.WebApp.openLink(ADSTERRA_SMARTLINK);
-    } else {
-      window.open(ADSTERRA_SMARTLINK, '_blank');
-    }
+    if (AdController) {
+      AdController.show().then((result) => {
+        // User watched ad successfully
+        buttonStates[index] = (buttonStates[index] || 0) + 1;
+        totalDiamonds += REWARD_PER_AD;
 
-    setTimeout(() => {
-      buttonStates[index] = (buttonStates[index] || 0) + 1;
-      totalDiamonds += REWARD_PER_AD;
+        document.getElementById("diamond-counter").innerText = totalDiamonds.toLocaleString();
+        buildButtons();
 
-      document.getElementById("diamond-counter").innerText = totalDiamonds.toLocaleString();
-      buildButtons();
+        userDatabaseRef.update({
+          name: currentUserName,
+          diamonds: totalDiamonds,
+          tasks: buttonStates,
+          lastDate: getTodayString()
+        });
 
-      userDatabaseRef.update({
-        name: currentUserName,
-        diamonds: totalDiamonds,
-        tasks: buttonStates,
-        lastDate: getTodayString()
+        if (tg?.showAlert) {
+          tg.showAlert(`🎉 +${REWARD_PER_AD} Diamonds credit ho gaye!`);
+        } else {
+          alert(`🎉 +${REWARD_PER_AD} Diamonds credit ho gaye!`);
+        }
+      }).catch((result) => {
+        // User skipped ad or ad wasn't available
+        console.warn("Adsgram error or skipped:", result);
+        if (btn) btn.disabled = false;
+        
+        const msg = result.description || "Ad pura watch nahi hua ya skip kar diya gaya.";
+        if (tg?.showAlert) {
+          tg.showAlert(msg);
+        } else {
+          alert(msg);
+        }
       });
-    }, 1200);
+    } else {
+      alert("Adsgram load ho raha hai, 5 seconds baad dobara try karein.");
+      if (btn) btn.disabled = false;
+    }
   }
 
   function showWallet() { document.getElementById("wallet-popup").style.display = "flex"; }
