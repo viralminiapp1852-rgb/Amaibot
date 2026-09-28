@@ -12,9 +12,6 @@
   <!-- Telegram Web App SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-  <!-- Adsgram SDK -->
-  <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -386,8 +383,8 @@
   const ADS_PER_BUTTON = 2; 
   const REWARD_PER_AD = 20;  
 
-  // Adsgram Rewarded Controller Initialization (Block ID: 50223)
-  const AdController = window.Adsgram ? window.Adsgram.init({ blockId: "50223" }) : null;
+  // Dedicated Adsterra Mainstream Smartlink
+  const ADSTERRA_LINK = "https://www.profitableratecpmnetwork.com/fhrujsyn?key=873ac4051875f59b08114297d528e2e8";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDvC04b5_jmvpyxS-Yk2in0Uee3I8G5jd4",
@@ -494,8 +491,8 @@
             </span>
           </div>
 
-          <button class="btn-mission" id="btn-mission-${i}" ${completed ? "disabled" : ""} onclick="triggerAdsgramAd(${i})">
-            ${completed ? "Claimed ✨" : `▶ Watch Ad (+${REWARD_PER_AD} 💎)`}
+          <button class="btn-mission" id="btn-mission-${i}" ${completed ? "disabled" : ""} onclick="triggerAdsterraTask(${i})">
+            ${completed ? "Claimed ✨" : `⚡ Complete Sponsor Step (+${REWARD_PER_AD} 💎)`}
           </button>
 
           <div class="track-wrapper">
@@ -506,50 +503,41 @@
     }
   }
 
-  // Adsgram Ad Show Handler
-  function triggerAdsgramAd(index) {
+  // Trigger Adsterra Clean Direct Link
+  function triggerAdsterraTask(index) {
     if (buttonStates[index] >= ADS_PER_BUTTON) return;
 
     const btn = document.getElementById(`btn-mission-${index}`);
     if (btn) btn.disabled = true;
 
-    if (AdController) {
-      AdController.show().then((result) => {
-        // User watched ad successfully
-        buttonStates[index] = (buttonStates[index] || 0) + 1;
-        totalDiamonds += REWARD_PER_AD;
-
-        document.getElementById("diamond-counter").innerText = totalDiamonds.toLocaleString();
-        buildButtons();
-
-        userDatabaseRef.update({
-          name: currentUserName,
-          diamonds: totalDiamonds,
-          tasks: buttonStates,
-          lastDate: getTodayString()
-        });
-
-        if (tg?.showAlert) {
-          tg.showAlert(`🎉 +${REWARD_PER_AD} Diamonds credit ho gaye!`);
-        } else {
-          alert(`🎉 +${REWARD_PER_AD} Diamonds credit ho gaye!`);
-        }
-      }).catch((result) => {
-        // User skipped ad or ad wasn't available
-        console.warn("Adsgram error or skipped:", result);
-        if (btn) btn.disabled = false;
-        
-        const msg = result.description || "Ad pura watch nahi hua ya skip kar diya gaya.";
-        if (tg?.showAlert) {
-          tg.showAlert(msg);
-        } else {
-          alert(msg);
-        }
-      });
+    // Open link via Telegram native browser
+    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
+      window.Telegram.WebApp.openLink(ADSTERRA_LINK);
     } else {
-      alert("Adsgram load ho raha hai, 5 seconds baad dobara try karein.");
-      if (btn) btn.disabled = false;
+      window.open(ADSTERRA_LINK, '_blank');
     }
+
+    // Reward Credit
+    setTimeout(() => {
+      buttonStates[index] = (buttonStates[index] || 0) + 1;
+      totalDiamonds += REWARD_PER_AD;
+
+      document.getElementById("diamond-counter").innerText = totalDiamonds.toLocaleString();
+      buildButtons();
+
+      userDatabaseRef.update({
+        name: currentUserName,
+        diamonds: totalDiamonds,
+        tasks: buttonStates,
+        lastDate: getTodayString()
+      });
+
+      if (tg?.showAlert) {
+        tg.showAlert(`🎉 +${REWARD_PER_AD} Diamonds credit ho gaye!`);
+      } else {
+        alert(`🎉 +${REWARD_PER_AD} Diamonds credit ho gaye!`);
+      }
+    }, 1200);
   }
 
   function showWallet() { document.getElementById("wallet-popup").style.display = "flex"; }
